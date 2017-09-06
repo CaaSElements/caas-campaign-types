@@ -1,8 +1,18 @@
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../caas-collection/caas-collection.html">
+<link rel="import" href="../caas-auth/caas-auth.html">
+
+<!--
+`caas-campaign-types`
+Polymer Campaign types Element for Crowdfunding as a Service Solutions
+
+@demo demo/index.html
+-->
 
 <dom-module id="caas-campaign-types">
   <template>
+
     <iron-ajax
       id="getItems"
       url="[[apiEndpoint]]/campaigns/[[campaignId]]/campaigntypes"
@@ -11,65 +21,95 @@
       auto="[[autoDownload]]"
       loading="{{loadingCampaignTypes}}"
     ></iron-ajax>
+
   </template>
 
   <script>
-    /**
-     * `caas-campaign-types`
-     * Polymer CampaignTypes Element for Crowdfunding as a Service Solutions
-     *
-     * @customElement
-     * @polymer
-     * @demo demo/index.html
-     */
-    class CaasCampaignTypes extends Polymer.Element {
-      static get is() { return 'caas-campaign-types'; }
-      static get properties() {
-        return {
-          apiEndpoint: {
-            type: String,
-            value: null
-          },
-          campaignId: {
-            type: String,
-            value: null
-          },
-          accessToken: {
-            type: String,
-            value: null
-          },
-          autoDownload: {
-            type: Boolean,
-            value: false
-          },
-          campaignTypes: {
-            type: Array,
-            value: [],
-            computed: '_computeCampaignTypes(_apiData.*)',
-            notify: true
-          },
-          _apiData: {
-            type: Array
-          },
-          loadingCampaignTypes: {
-            type: Boolean,
-            value: false
-          },
-        };
-      }
-      /*
-      * Download All Incentives
-      */
-      getItems() {
-        this.$.getItems.generateRequest();
-      }
+    Polymer({
 
-      _computeCampaignTypes(apiDataChange) {
-          var apiData = apiDataChange.base;
-          if(!apiData) return [];
-          return apiData.map(this._parseApiDataItemToCampaignType);
-      }
-      _parseApiDataItemToCampaignType(item) {
+      is: 'caas-campaign-types',
+      properties: {
+
+        /**
+        * The server side API endpoint
+        */
+        apiEndpoint: {
+          type: String,
+          value: null
+        },
+
+        /**
+        * Exposes the access token (JSON web token) associated with the current session
+        */
+        accessToken: {
+          type: String,
+          value: null,
+          notify: true
+        },
+
+        /**
+        * True while getting all types
+        */
+        loadingCampaignTypes: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        /**
+        * Determines whether the types should be downloaded automatically
+        */
+        autoDownload: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+        * The campaign Id associated with the campaign
+        */
+        campaignId: {
+          type: String,
+          value: null
+        },
+
+        /**
+        * List of all available types for this `campaignId`
+        */
+        campaignTypes: {
+          type: Array,
+          value: [],
+          computed: '_computeCampaignTypes(_apiData.*)',
+          notify: true
+        },
+
+        _requestHeaders: {
+          type: Object,
+          computed: '_computeRequestHeaders(accessToken)'
+        },
+
+        _apiData: {
+          type: Array
+        }
+
+      },
+
+      _computeCampaignTypes: function(apiDataChange) {
+        var apiData = apiDataChange.base;
+        if(!apiData) return [];
+        return apiData.map(this._parseApiDataItemToCampaignType)
+      },
+
+      _computeRequestHeaders: function(accessToken) {
+        return {
+          'authorization': 'Bearer ' + accessToken
+        }
+      },
+
+      _getApiValue: function(value) {
+        return value;
+      },
+
+      _parseApiDataItemToCampaignType: function(item) {
           return {
               campaignId: item.campaignId,
               contractTypeId: item.contractTypeId,
@@ -82,8 +122,6 @@
               progress: item.progress
           };
       }
-    }
-
-    window.customElements.define(CaasCampaignTypes.is, CaasCampaignTypes);
+    });
   </script>
 </dom-module>

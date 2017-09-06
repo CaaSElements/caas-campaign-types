@@ -21,10 +21,8 @@
     <div class="vertical-section-container centered">
       <h3>Basic caas-campaign-types demo</h3>
       <demo-snippet>
-        <template>
+        <template is="dom-bind">
 
-          <dom-bind>
-            <template>
               <caas-campaign-types
                 auto-download
                 id="campaigntypes"
@@ -33,7 +31,7 @@
                 campaign-id="892">
               </caas-campaign-types>
 
-              <template is="dom-repeat" items="[[campaignTypes]]" index-as="index">
+              <template is="dom-repeat" items="{{campaignTypes}}" index-as="index">
                 <ul>
                     <li>[[item.campaignId]]</li>
                     <li>[[item.contractTypeId]]</li>
@@ -44,11 +42,9 @@
                     <li>[[item.investmentVerb]]</li>
                     <li>[[item.maximumTotalAmount]]</li>
                     <li>[[item.progress]]</li>
+
                 </ul>
               </template>
-          </template>
-        </dom-bind>
-
 
         </template>
       </demo-snippet>

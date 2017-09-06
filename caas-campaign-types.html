@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 
 <dom-module id="caas-campaign-types">
   <template>
@@ -7,7 +8,15 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+    <iron-ajax
+      id="getItems"
+      url="[[apiEndpoint]]/campaigns/[[campaignId]]/campaigntypes"
+      method="GET"
+      last-response="{{_apiData}}"
+      auto="[[autoDownload]]"
+      loading="{{loadingCampaignTypes}}"
+    ></iron-ajax>
+    <h2>[[campaignId]]</h2>
   </template>
 
   <script>
@@ -23,11 +32,61 @@
       static get is() { return 'caas-campaign-types'; }
       static get properties() {
         return {
-          prop1: {
+          apiEndpoint: {
             type: String,
-            value: 'caas-campaign-types'
-          }
+            value: null
+          },
+          campaignId: {
+            type: String,
+            value: null
+          },
+          accessToken: {
+            type: String,
+            value: null
+          },
+          autoDownload: {
+            type: Boolean,
+            value: false
+          },
+          campaignTypes: {
+            type: Array,
+            value: [],
+            computed: '_computeCampaignTypes(_apiData.*)',
+            notify: true
+          },
+          _apiData: {
+            type: Array
+          },
+          loadingCampaignTypes: {
+            type: Boolean,
+            value: false
+          },
         };
+      }
+      /*
+      * Download All Incentives
+      */
+      getItems() {
+        this.$.getItems.generateRequest();
+      }
+
+      _computeCampaignTypes(apiDataChange) {
+          var apiData = apiDataChange.base;
+          if(!apiData) return [];
+          return apiData.map(this._parseApiDataItemToCampaignType);
+      }
+      _parseApiDataItemToCampaignType(item) {
+          return {
+              campaignId: item.campaignId,
+              contractTypeId: item.contractTypeId,
+              contractTypeName: item.contractTypeName,
+              minimumInvestment: item.minimumInvestment,
+              maximumInvestment: item.maximumInvestment,
+              investmentIncrement: item.investmentIncrement,
+              investmentVerb: item.investmentVerb,
+              maximumTotalAmount: item.maximumTotalAmount,
+              progress: item.progress
+          };
       }
     }
 

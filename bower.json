@@ -3,7 +3,8 @@
   "description": "Polymer CampaignTypes Element for Crowdfunding as a Service Solutions",
   "main": "caas-campaign-types.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0"
+    "polymer": "Polymer/polymer#^2.0.0",
+    "iron-ajax": "^2.0.5"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

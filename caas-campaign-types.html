@@ -182,11 +182,15 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
     },
 
     _handleGetItemsRequest: function(evt) {
-        this._setStatusResponseObject('loading');
+        this._setStatusResponseObject('loading',
+              this.$.getItems.method,
+              this.$.getItems.route);
     },
 
     _handleGetItemsResponse: function(evt) {
-        this._setStatusResponseObject('success');
+        this._setStatusResponseObject('success',
+              this.$.getItems.method,
+              this.$.getItems.route);
     },
 
     _handleGetItemsError: function(evt) {

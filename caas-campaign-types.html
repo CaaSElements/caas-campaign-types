@@ -17,6 +17,9 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
       method="GET"
       last-response="{{_apiData}}"
       auto="[[autoDownload]]"
+      on-request="_handleGetItemsRequest"
+      on-response="_handleGetItemsResponse"
+      on-error="_handleGetItemsError"
       loading="{{loadingCampaignTypes}}"
     ></iron-ajax>
 
@@ -25,6 +28,7 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
       url="[[apiEndpoint]]/campaigns/[[campaignId]]/campaigntypes"
       headers="[[_requestHeaders]]"
       method="PUT"
+      on-request="_handleUpdateItemRequest"
       on-response="_handleUpdateItemResponse"
       on-error="_handleUpdateItemError"
       debounce-duration="500"
@@ -90,6 +94,11 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
           notify: true
         },
 
+        responseStatus: {
+            type: Object,
+            notify: true
+        },
+
         _requestHeaders: {
           type: Object,
           computed: '_computeRequestHeaders(accessToken)'
@@ -130,16 +139,6 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
         this.$.updateItem.generateRequest();
       },
 
-      _handleUpdateItemResponse: function(evt) {
-        var savedItem = evt.detail.response;
-        var toBeUpdatedArrayIndex = this._getArrayIndexByCampaignTypeId(savedItem.id);
-        this._updateCampaignTypeByArrayIndex(savedItem, toBeUpdatedArrayIndex);
-        this.$.updateItem.url = null;
-        this.fire('campaign-type-updated', {
-          response: savedItem
-        });
-      },
-
     _getArrayIndexByCampaignTypeId: function(id) {
       for (var i = 0; i < this.campaignTypes.length; i++) {
         if(this.campaignTypes[i].id === id){
@@ -155,12 +154,43 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
       }
     },
 
-    _handleUpdateItemError: function(evt) {
+    _handleUpdateItemRequest: function(evt) {
+        this._setStatusResponseObject('loading');
+    },
+
+    _handleUpdateItemResponse: function(evt) {
+      var savedItem = evt.detail.response;
+      var toBeUpdatedArrayIndex = this._getArrayIndexByCampaignTypeId(savedItem.id);
+      this._updateCampaignTypeByArrayIndex(savedItem, toBeUpdatedArrayIndex);
+      this.$.updateItem.url = null;
+      this.fire('campaign-type-updated', {
+        response: savedItem
+      });
+      this._setStatusResponseObject('success');
+    },
+
+    _handleUpdateItemError: function(evt, data) {
       this.$.updateItem.url = null;
       this.fire('campaign-type-update-error', {
         message: evt.detail.error.message,
         response: evt.detail.response
       });
+      this._setStatusResponseObject('failed',
+            this.$.updateItem.method,
+            this.$.updateItem.route,
+            'Opslaan mislukt' + ((data.request.xhr.response && data.request.xhr.response.error[0]) ? ': '+data.request.xhr.response.error[0].message : ''));
+    },
+
+    _handleGetItemsRequest: function(evt) {
+        this._setStatusResponseObject('loading');
+    },
+
+    _handleGetItemsResponse: function(evt) {
+        this._setStatusResponseObject('success');
+    },
+
+    _handleGetItemsError: function(evt) {
+        this._setStatusResponseObject('error', this.$.getItems.method. this.$.getItems.route);
     },
 
       _computeRequestHeaders: function(accessToken) {
@@ -186,6 +216,15 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
               maximumTotalAmount: item.maximumTotalAmount,
               progress: item.progress
           };
+      },
+
+      _setStatusResponseObject: function(status, method, route, error) {
+          this.set('responseStatus', {
+              status: status,
+              method: method,
+              route: route,
+              error: error
+          });
       }
     });
   </script>

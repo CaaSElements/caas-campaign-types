@@ -41,7 +41,11 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
 
       is: 'caas-campaign-types',
       properties: {
-
+        activeRole: {
+          type: String,
+          value: null,
+          notify: true
+        },
         /**
         * The server side API endpoint
         */
@@ -199,7 +203,8 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
 
       _computeRequestHeaders: function(accessToken) {
         return {
-          'authorization': 'Bearer ' + accessToken
+          'authorization': 'Bearer ' + accessToken,
+          'activeRole': activeRole
         }
       },
 

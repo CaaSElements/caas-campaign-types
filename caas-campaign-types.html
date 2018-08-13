@@ -105,7 +105,7 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
 
         _requestHeaders: {
           type: Object,
-          computed: '_computeRequestHeaders(accessToken)'
+          computed: '_computeRequestHeaders(accessToken, activeRole)'
         },
 
         _apiData: {
@@ -201,7 +201,7 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
         this._setStatusResponseObject('error', this.$.getItems.method. this.$.getItems.route);
     },
 
-      _computeRequestHeaders: function(accessToken) {
+      _computeRequestHeaders: function(accessToken, activeRole) {
         return {
           'authorization': 'Bearer ' + accessToken,
           'activeRole': activeRole

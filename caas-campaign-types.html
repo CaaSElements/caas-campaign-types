@@ -132,16 +132,32 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
         return apiData.map(this._parseApiDataItemToCampaignType)
       },
 
-      _campaignTypesDataChanged: function(changeRecord) {
-        var arrayItemIndex = changeRecord.path.split('.');
-        if (!arrayItemIndex[2]) return;
-        var item = this.get('campaignTypes.' + arrayItemIndex[1]);
+      _campaignTypesDataChanged: function (changeRecord) {
+				var arrayItemIndex = changeRecord.path.split('.');
 
-        this.fire('campaign-type-updating', item.id);
-        this.$.updateItem.url = this.apiEndpoint + '/entrepreneurs/'+ this.campaignId +'/campaigntypes/' + item.id;
-        this.$.updateItem.body = JSON.stringify(item);
-        this.$.updateItem.generateRequest();
-      },
+				if (!arrayItemIndex[2]) return;
+				var item = this.get('campaignTypes.' + arrayItemIndex[1]);
+
+				this.fire('campaign-type-updating', item.id);
+				this.$.updateItem.url = this.apiEndpoint + '/entrepreneurs/' + this.campaignId + '/campaigntypes/' + item.id;
+				this.$.updateItem.body = JSON.stringify(item);
+			},
+
+			updateCampaignTypesManualy: function() {
+				if (this.campaignTypes.length == 1) {
+						this.$.updateItem.url = this.apiEndpoint + '/entrepreneurs/' + this.campaignId + '/campaigntypes/' + this.campaignTypes[0].id;
+						this.$.updateItem.body = JSON.stringify(this.campaignTypes[0]);
+						return this.$.updateItem.generateRequest();
+				}
+				else if (this.campaignTypes.length > 1) {
+					for (var i = 0; i < this.campaignTypes.length; i++) {
+						var item = this.campaignTypes[i];
+						this.$.updateItem.url = this.apiEndpoint + '/entrepreneurs/' + this.campaignId + '/campaigntypes/' + item.id;
+						this.$.updateItem.body = JSON.stringify(item);
+						this.$.updateItem.generateRequest();
+					}
+				}
+			},
 
     _getArrayIndexByCampaignTypeId: function(id) {
       for (var i = 0; i < this.campaignTypes.length; i++) {

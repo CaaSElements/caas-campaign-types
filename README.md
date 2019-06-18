@@ -1,5 +1,7 @@
 # \<caas-campaign-types\>
 
+v0.0.10
+
 Polymer CampaignTypes Element for Crowdfunding as a Service Solutions
 
 ## Install the Polymer-CLI

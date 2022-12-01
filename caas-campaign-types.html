@@ -133,6 +133,11 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
 			updateCampaignTypesManualy: function () {
 				if (this.campaignTypes.length == 1) {
 					this.$.updateItem.url = this.apiEndpoint + '/entrepreneurs/' + this.campaignId + '/campaigntypes/' + this.campaignTypes[0].id;
+
+					this.campaignTypes[0].maximumTotalAmount = parseInt(
+                        this.campaignTypes[0].maximumTotalAmount
+                    );
+
 					this.$.updateItem.body = JSON.stringify(this.campaignTypes[0]);
 					return this.$.updateItem.generateRequest();
 				}
@@ -140,6 +145,10 @@ Polymer Campaign types Element for Crowdfunding as a Service Solutions
 					for (var i = 0; i < this.campaignTypes.length; i++) {
 						var item = this.campaignTypes[i];
 						this.$.updateItem.url = this.apiEndpoint + '/entrepreneurs/' + this.campaignId + '/campaigntypes/' + item.id;
+						
+						item.maximumTotalAmount = parseInt(
+                            item.maximumTotalAmount
+                        );
 						this.$.updateItem.body = JSON.stringify(item);
 						this.$.updateItem.generateRequest();
 					}
